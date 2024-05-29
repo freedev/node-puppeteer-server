@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec babel-node src/index.js",
+    "startWebGL": "nodemon --exec babel-node src/indexWebGL.js",
     "test": "echo \"No test specified\" && exit 0"
   },
   "keywords": [],

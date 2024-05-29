@@ -5,10 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch via NPM",
+            "name": "Launch index.js via NPM",
             "type": "node",
             "request": "launch",
             "runtimeArgs": ["start"],
+            "runtimeExecutable": "npm",
+            "skipFiles": ["<node_internals>/**"],
+            "outputCapture": "std",
+        },
+        {
+            "name": "Launch indexWebGL.js via NPM",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": ["run", "startWebGL"],
             "runtimeExecutable": "npm",
             "skipFiles": ["<node_internals>/**"],
             "outputCapture": "std",

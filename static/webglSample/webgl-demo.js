@@ -1,4 +1,4 @@
-var cubeRotation = 0.0;
+var cubeRotation = 0.5;
 
 const canvas = document.querySelector('#glcanvas');
 const gl = canvas.getContext('webgl');
@@ -69,15 +69,13 @@ const texture = loadTexture(gl, 'cubetexture.png');
 var then = 0;
 
 // Draw the scene repeatedly
-function render(now) {
-  now *= 0.001;  // convert to seconds
-  const deltaTime = now - then;
-  then = now;
+function render() {
 
-  drawScene(gl, programInfo, buffers, texture, deltaTime);
+  drawScene(gl, programInfo, buffers, texture, 0);
 
   // requestAnimationFrame(render);
 }
+
 //
 // Start here
 //
@@ -280,7 +278,7 @@ function isPowerOf2(value) {
 //
 // Draw the scene.
 //
-function drawScene(gl, programInfo, buffers, texture, deltaTime) {
+function drawScene(gl, programInfo, buffers, texture) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
   gl.clearDepth(1.0);                 // Clear everything
   gl.enable(gl.DEPTH_TEST);           // Enable depth testing
@@ -406,9 +404,6 @@ function drawScene(gl, programInfo, buffers, texture, deltaTime) {
     gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
   }
 
-  // Update the rotation for the next draw
-
-  cubeRotation += deltaTime;
 }
 
 //
