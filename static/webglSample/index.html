@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>WebGL Demo</title>
+    <link rel="stylesheet" href="./webgl.css" type="text/css">
+    <script src="../gl-matrix-min.js"
+      integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+      crossorigin="anonymous" defer>
+    </script>
+    <script src="webgl-demo.js" defer></script>
+  </head>
+
+  <body>
+    <div>
+      <canvas id="glcanvas" width="640" height="480"></canvas>
+    </div>
+    <div>
+      <label for="cubeRotation">Cube Rotation</label>
+      <input type="number" step="0.05" id="cubeRotation" value="0.0">
+      <input type="button" onclick="changeCubeRotation()" value="Change Rotation">
+      <script>
+        function changeCubeRotation(){
+        //do something here
+            var input = document.getElementById("cubeRotation")
+            if (input.value) {
+              console.log("current rotation " + cubeRotation)
+              cubeRotation = input.value
+              console.log("change rotation " + cubeRotation)
+              render(0)
+            }
+        }
+      </script>
+      </div>
+    
+  </body>
+</html>

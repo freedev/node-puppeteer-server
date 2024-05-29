@@ -1,28 +1,51 @@
 import 'dotenv/config';
-import cors from 'cors';
 import express from 'express';
 import puppeteer from 'puppeteer';
 
 const app = express();
 app.use(express.static('static'))
-app.use(cors());
+
+var g_browser = null
+var g_page = null
 
 
-let opt = {
-  type: 'png',
-  fullPage: true,
-  encoding: 'binary',
-  captureBeyondViewport: true
+app.listen(process.env.PORT, async () => {
+  console.log(`Example app listening on port ${process.env.PORT}!`);
+  // server ready to accept connections here
+  g_browser = await puppeteer.launch( 
+    // {headless: false}
+  );
+  console.log(`browser created!`);
+  g_page = await g_browser.newPage();
+  // Navigate the page to a URL
+  console.log(`page created!`);
+  await g_page.goto('http://localhost:3000/webglSample/index.html');
+  console.log(`sample loaded in page!`);
+  await renderTheCube(g_page, 0.5);
+  console.log(`cube render complete!`);
+});
+
+async function renderTheCube(page, rotation) {
+  await page.evaluate((rotation) => {
+    cubeRotation = rotation
+    render(0);
+  }, rotation);
 }
 
 app.get('/', async (req, res) => {
 
-  // Launch the browser and open a new blank page
-  const browser = await puppeteer.launch();
+  const browser =  await puppeteer.launch();
   const page = await browser.newPage();
 
-  await page.goto('chrome://gpu');
+  await page.goto(`chrome://gpu`);
 
+  let opt = {
+    type: 'png',
+    fullPage: true,
+    encoding: 'binary',
+    captureBeyondViewport: true
+  }
+  
   let resp = await page.screenshot(opt)
 
   await browser.close();
@@ -33,36 +56,26 @@ app.get('/', async (req, res) => {
 
 app.get('/webgl', async (req, res) => {
 
-  // Launch the browser and open a new blank page
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+  let rotation = 0.0
+  if (req.query.rotation) {
+    rotation = parseFloat(req.query.rotation )
+  }
 
-  // Navigate the page to a URL
-  // await page.goto('https://webglsamples.org/aquarium/aquarium.html');
+  renderTheCube(g_page, rotation)
 
-  // await page.waitForNavigation()  
-
-  await page.goto('http://localhost:3000/sample6/index.html');
+  const element = await g_page.$('#glcanvas');
 
   let opt = {
     type: 'png',
-    fullPage: true,
     encoding: 'binary',
     captureBeyondViewport: true
   }
 
-  let resp = await page.screenshot(opt)
+  let resp = await element.screenshot(opt)
 
-  // Print the full title
-  // console.log('The title of this blog post is "%s".', fullTitle);
-
-  await browser.close();
+  console.log(rotation)
 
   res.type('png') // => 'image/png'
+  res.header({'Cache-Control':'no-store, no-cache, must-revalidate, proxy-revalidate'})
   res.send(resp);
 });
-
-
-app.listen(process.env.PORT, () =>
-  console.log(`Example app listening on port ${process.env.PORT}!`),
-);
