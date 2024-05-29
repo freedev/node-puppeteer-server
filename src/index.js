@@ -8,33 +8,42 @@ app.use(express.static('static'))
 var g_browser = null
 var g_page = null
 
-
 app.listen(process.env.PORT, async () => {
-  console.log(`Example app listening on port ${process.env.PORT}!`);
+  console.log(`Example app listening on port ${process.env.PORT}`);
   // server ready to accept connections here
   g_browser = await puppeteer.launch( 
     // {headless: false}
   );
-  console.log(`browser created!`);
+  console.log(`browser created`);
   g_page = await g_browser.newPage();
+
+  g_page.on('console', msg => {
+      if (msg) {
+        const text = msg.text()
+        console.log('PAGE LOG:', text)
+      }
+  })
+  // g_page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+
   // Navigate the page to a URL
-  console.log(`page created!`);
+  console.log(`page created`);
   await g_page.goto('http://localhost:3000/webglSample/index.html');
-  console.log(`sample loaded in page!`);
+  console.log(`sample loaded in page`);
   await renderTheCube(g_page, 0.5);
-  console.log(`cube render complete!`);
+  console.log(`render complete`);
 });
 
 async function renderTheCube(page, rotation) {
   await page.evaluate((rotation) => {
     cubeRotation = rotation
+    console.log(`received rotation ${cubeRotation}`)
     render(0);
   }, rotation);
 }
 
 app.get('/', async (req, res) => {
 
-  const browser =  await puppeteer.launch();
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
   await page.goto(`chrome://gpu`);
@@ -45,6 +54,11 @@ app.get('/', async (req, res) => {
     encoding: 'binary',
     captureBeyondViewport: true
   }
+
+    await page.evaluate(() => {
+      window.resizeTo(100, 100)
+      console.log("window resized!!")
+    });
   
   let resp = await page.screenshot(opt)
 
