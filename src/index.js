@@ -15,8 +15,11 @@ app.get('/', async (req, res) => {
 
   page.on('console', msg => console.log('PAGE LOG:', msg.text()))
 
+    // Set screen size
+  await page.setViewport({width: 1080, height: 1024});
+
   await page.evaluate(() => {
-      window.resizeTo(100, 100)
+      window.resizeTo(1080, 1024)
       console.log("window resized!!")
   });
   
